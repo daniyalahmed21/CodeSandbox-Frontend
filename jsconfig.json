@@ -4,7 +4,7 @@
       "paths": {
         "Components/*": ["./src/components/*"],
         "Pages/*": ["./src/pages/*"],
-        "Configs/*": ["./src/configs/*"],
+        "Configs/*": ["./src/config/*"],
         "Utils/*": ["./src/utils/*"],
         "Store/*": ["./src/store/*"],
         "Assets/*": ["./src/assets/*"],
