@@ -7,8 +7,8 @@ const ProjectPlayground = () => {
   return (
     <div>
       ProjectPlayground: {id}
-      <EditorComponent />
       <TreeStructure />
+      <EditorComponent />
     </div>
   );
 };

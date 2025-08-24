@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router";
 import { useTreeStructureStore } from "Store/TreeStructureStore";
 
+import TreeNode from "./TreeNode";
+
 const TreeStructure = () => {
   const { treeStructure, setTreeStructure } = useTreeStructureStore();
   const { id } = useParams();
@@ -15,11 +17,9 @@ const TreeStructure = () => {
   }, [id, setTreeStructure, treeStructure]);
 
   return (
-    <div className="p-4 text-white">
+    <div className="p-4 text-white bg-zinc-900 rounded-lg">
       {treeStructure ? (
-        <pre className="bg-gray-900 p-3 rounded">
-          {JSON.stringify(treeStructure, null, 2)}
-        </pre>
+        <TreeNode fileDataStructure={treeStructure} />
       ) : (
         <p>Loading tree...</p>
       )}
