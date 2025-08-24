@@ -10,3 +10,13 @@ export const createProjectApi = async () => {
     throw error;
   }
 };
+
+export const getProjectTree = async (projectId) => {
+  try {
+    const response = await instance.get(`/api/v1/projects/${projectId}/tree`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

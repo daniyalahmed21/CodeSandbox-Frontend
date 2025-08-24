@@ -32,14 +32,14 @@ const ThemeSelector = ({ onThemeChange, currentTheme }) => (
       gap: '8px',
     }}
   >
-    <span style={{ color: '#fff' }}>Select Theme:</span>
+    <span style={{ color: '#fff' }}>Select Theme </span>
     <Select
       value={currentTheme}
       onChange={onThemeChange}
       options={themeOptions}
       style={{ width: 260 }}
       showSearch
-      optionFilterProp="label" // enables searching by label
+      optionFilterProp="label" 
     />
   </div>
 );
