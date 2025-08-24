@@ -1,41 +1,47 @@
-import 'antd/dist/reset.css'; // Import Ant Design styles
+import 'antd/dist/reset.css';
 
 import React from 'react';
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 
-const { Option } = Select;
-
-const themeOptions = [
-  { value: 'dracula', label: 'Dracula' },
-  { value: 'github-dark', label: 'GitHub Dark' },
-  { value: 'github-light', label: 'GitHub Light' },
-  { value: 'monokai', label: 'Monokai' },
-  { value: 'solarized-dark', label: 'Solarized Dark' },
-  { value: 'solarized-light', label: 'Solarized Light' },
-  { value: 'vs-dark', label: 'Visual Studio Dark' }, // Built-in Monaco theme
-  { value: 'vs', label: 'Visual Studio Light' },    // Built-in Monaco theme
+import { customThemes } from '../../../themes/index'; 
+// Built-in Monaco themes
+const builtInThemes = [
+  { value: 'vs-dark', label: 'Visual Studio Dark' },
+  { value: 'vs', label: 'Visual Studio Light' },
+  { value: 'hc-black', label: 'High Contrast Black' },
 ];
 
-const ThemeSelector = ({ onThemeChange, currentTheme }) => {
-  return (
-    <Space 
-      className="theme-selector-container" 
-      style={{ padding: '10px 16px', borderBottom: '1px solid #333' }}
-    >
-      <span style={{ color: '#fff' }}>Select Theme:</span>
-      <Select
-        value={currentTheme}
-        onChange={onThemeChange}
-        style={{ width: 200 }}
-      >
-        {themeOptions.map((theme) => (
-          <Option key={theme.value} value={theme.value}>
-            {theme.label}
-          </Option>
-        ))}
-      </Select>
-    </Space>
-  );
-};
+// Generate options from customThemes keys
+const customThemeOptions = Object.keys(customThemes).map((themeKey) => ({
+  value: themeKey,
+  label: themeKey
+    .split('-')               
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' '),               
+}));
+
+const themeOptions = [...builtInThemes, ...customThemeOptions];
+
+const ThemeSelector = ({ onThemeChange, currentTheme }) => (
+  <div
+    style={{
+      padding: '10px 16px',
+      borderBottom: '1px solid #333',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+    }}
+  >
+    <span style={{ color: '#fff' }}>Select Theme:</span>
+    <Select
+      value={currentTheme}
+      onChange={onThemeChange}
+      options={themeOptions}
+      style={{ width: 260 }}
+      showSearch
+      optionFilterProp="label" // enables searching by label
+    />
+  </div>
+);
 
 export default ThemeSelector;
