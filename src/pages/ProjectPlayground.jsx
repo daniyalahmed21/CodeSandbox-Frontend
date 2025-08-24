@@ -1,9 +1,14 @@
-import React from 'react'
-
+import React from "react";
+import EditorComponent from "Components/molecules/EditorComponent";
+import { useParams } from "react-router";
 const ProjectPlayground = () => {
+  const { id } = useParams;
   return (
-    <div>ProjectPlayground</div>
-  )
-}
+    <div>
+      ProjectPlayground: {id}
+      <EditorComponent />
+    </div>
+  );
+};
 
-export default ProjectPlayground
+export default ProjectPlayground;
