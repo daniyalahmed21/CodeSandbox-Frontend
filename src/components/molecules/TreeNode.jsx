@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import { FileIcon } from "Components/atoms/FileIcon";
-import { ChevronDown, ChevronRight } from "lucide-react"; 
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useContextMenuStore } from "Store/ContextMenuStore";
 import { useEditorSocketStore } from "Store/EditorSocketStore";
+import ContextMenu from "./ContextMenu";
 
 const TreeNode = ({ fileDataStructure }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { socketEditor } = useEditorSocketStore();
+  const { openMenu } = useContextMenuStore();
 
   const handleFileClick = (filePath) => {
     if (socketEditor) {
       socketEditor.emit("readFile", { pathOfFileOrFolder: filePath });
     }
+  };
+
+  const handleContextMenu = (e, filePath) => {
+    e.preventDefault();
+    
+    openMenu(e.clientX, e.clientY, filePath);
   };
 
   if (!fileDataStructure) return null;
@@ -43,12 +52,14 @@ const TreeNode = ({ fileDataStructure }) => {
           )}
         </div>
       ) : (
-        // File
-        <div className="flex items-center gap-2 py-1 text-gray-300 hover:text-white cursor-pointer">
+        <div
+          className="flex items-center gap-2 py-1 text-gray-300 hover:text-white cursor-pointer"
+          onContextMenu={(e) => handleContextMenu(e, fileDataStructure.path)}
+          onDoubleClick={() => handleFileClick(fileDataStructure.path)}
+        >
           <FileIcon name={fileDataStructure.name} />
-          <span onDoubleClick={() => handleFileClick(fileDataStructure.path)}>
-            {fileDataStructure.name}
-          </span>
+          <span>{fileDataStructure.name}</span>
+          <ContextMenu/>
         </div>
       )}
     </div>
