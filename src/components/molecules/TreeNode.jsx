@@ -11,9 +11,6 @@ const TreeNode = ({ fileDataStructure }) => {
     if (socketEditor) {
       socketEditor.emit("readFile", { pathOfFileOrFolder: filePath });
     }
-    socketEditor.on("readFileSuccess", ({ value }) => {
-      // console.log("File content:", data);
-    });
   };
 
   if (!fileDataStructure) return null;

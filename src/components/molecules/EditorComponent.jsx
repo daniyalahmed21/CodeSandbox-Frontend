@@ -5,27 +5,13 @@ import { useActiveFileTabStore } from "Store/ActiveFileTabStore";
 import { useEditorSocketStore } from "Store/EditorSocketStore";
 
 import { customThemes } from "../../../themes/index";
-
+let timerId;
 const EditorComponent = () => {
   const monaco = useMonaco();
   const [theme, setTheme] = useState("vs-dark");
+  const { activeFileTab } = useActiveFileTabStore();
   const { socketEditor } = useEditorSocketStore();
-  const { activeFileTab, setActiveFileTab } = useActiveFileTabStore();
 
-  useEffect(() => {
-    if (!socketEditor) return;
-  
-    const handleReadFile = ({ path, value }) => {
-      setActiveFileTab(path, value);
-    };
-  
-    socketEditor.on("readFileSuccess", handleReadFile);
-  
-    return () => {
-      socketEditor.off("readFileSuccess", handleReadFile);
-    };
-  }, [socketEditor, setActiveFileTab]);
-  
   useEffect(() => {
     if (!monaco) return;
 
@@ -36,18 +22,32 @@ const EditorComponent = () => {
     monaco.editor.setTheme(theme);
   }, [monaco, theme]);
 
+  const handleOnChange = (value) => {
+    console.log("Emitting writeFile:", { value, path: activeFileTab?.path })
+    if(timerId) clearTimeout(timerId);
+    timerId = setTimeout(()=>{
+      socketEditor.emit("writeFile", {
+        data: value,
+        pathOfFileOrFolder: activeFileTab.path,
+      });
+    },2000)
+    
+
+    
+  };
   return (
     <div className="w-full h-screen flex flex-col bg-slate-800">
       <ThemeSelector onThemeChange={setTheme} currentTheme={theme} />
       <div className="flex-grow">
         <Editor
           height="100%"
-          // defaultLanguage="javascript"
           value={
-            activeFileTab?.value ? activeFileTab?.value : "// Your code goes here"
+            activeFileTab?.value
+              ? activeFileTab?.value
+              : "// Your code goes here"
           }
-          // defaultValue={`function greet(name) {\n  return "Hello " + name;\n}`}
           theme={theme}
+          onChange={handleOnChange}
           options={{
             fontSize: 16,
             minimap: { enabled: false },
