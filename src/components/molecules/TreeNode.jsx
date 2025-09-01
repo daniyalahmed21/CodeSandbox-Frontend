@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { FileIcon } from "Components/atoms/FileIcon";
-import { ChevronDown,ChevronRight } from "lucide-react"; // for folder toggle arrows
+import { ChevronDown, ChevronRight } from "lucide-react"; 
+import { useEditorSocketStore } from "Store/EditorSocketStore";
 
 const TreeNode = ({ fileDataStructure }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { socketEditor } = useEditorSocketStore();
+
+  const handleFileClick = (filePath) => {
+    if (socketEditor) {
+      socketEditor.emit("readFile", { pathOfFileOrFolder: filePath });
+    }
+    socketEditor.on("readFileSuccess", ({ value }) => {
+      // console.log("File content:", data);
+    });
+  };
 
   if (!fileDataStructure) return null;
 
@@ -26,7 +37,6 @@ const TreeNode = ({ fileDataStructure }) => {
             <span>{fileDataStructure.name}</span>
           </button>
 
-          {/* Folder children */}
           {isOpen && (
             <div className="ml-6 border-l border-gray-700 pl-3">
               {fileDataStructure.children.map((child) => (
@@ -39,7 +49,9 @@ const TreeNode = ({ fileDataStructure }) => {
         // File
         <div className="flex items-center gap-2 py-1 text-gray-300 hover:text-white cursor-pointer">
           <FileIcon name={fileDataStructure.name} />
-          <span>{fileDataStructure.name}</span>
+          <span onDoubleClick={() => handleFileClick(fileDataStructure.path)}>
+            {fileDataStructure.name}
+          </span>
         </div>
       )}
     </div>
