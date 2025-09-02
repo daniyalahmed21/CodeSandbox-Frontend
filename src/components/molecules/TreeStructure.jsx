@@ -5,26 +5,20 @@ import { useTreeStructureStore } from "Store/TreeStructureStore";
 import TreeNode from "./TreeNode";
 
 const TreeStructure = () => {
-  const { treeStructure, setTreeStructure } = useTreeStructureStore();
-  const { id } = useParams();
+  const { id: projectId } = useParams();
+
+  const treeStructure = useTreeStructureStore((state) => state.treeStructure);
+  const loadTreeStructure = useTreeStructureStore((state) => state.loadTreeStructure);
+  const clearTreeStructure = useTreeStructureStore((state) => state.clearTreeStructure);
 
   useEffect(() => {
-    if (treeStructure) {
-      // console.log("Tree", treeStructure);
-    } else {
-      setTreeStructure(id);
-    }
-  }, [id, setTreeStructure, treeStructure]);
+    clearTreeStructure();
+    loadTreeStructure(projectId);
+  }, [projectId]);
 
-  return (
-    <div className="p-4 text-white bg-zinc-900 rounded-lg">
-      {treeStructure ? (
-        <TreeNode fileDataStructure={treeStructure} />
-      ) : (
-        <p>Loading tree...</p>
-      )}
-    </div>
-  );
+  if (!treeStructure) return <p>Loading tree...</p>;
+
+  return <TreeNode fileDataStructure={treeStructure} />;
 };
 
 export default TreeStructure;

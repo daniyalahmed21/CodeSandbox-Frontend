@@ -1,22 +1,27 @@
 import { create } from "zustand";
 
 import { useActiveFileTabStore } from "./ActiveFileTabStore";
+import { useTreeStructureStore } from "./TreeStructureStore";
 
 export const useEditorSocketStore = create((set) => ({
   socketEditor: null,
-  setSocketEditor: (incomingSocket) => {
-    const { setActiveFileTab } = useActiveFileTabStore.getState();
 
-    incomingSocket.on("readFileSuccess", ({ path, data, extension }) => {
+  setSocketEditor: (socket) => {
+    const { setActiveFileTab } = useActiveFileTabStore.getState();
+    const { loadTreeStructure } = useTreeStructureStore.getState();
+
+    socket.on("readFileSuccess", ({ path, data, extension }) => {
       setActiveFileTab(path, data, extension);
     });
 
-    incomingSocket.on("writeFileSuccess", ({ data, path }) => {
-      incomingSocket.emit("readFile", {
-        pathOfFileOrFolder: path,
-      });
-      console.log("File written successfully:", data);
+    socket.on("writeFileSuccess", ({ path }) => {
+      socket.emit("readFile", { pathOfFileOrFolder: path });
     });
-    set({ socketEditor: incomingSocket });
+
+    socket.on("deleteFileSuccess", () => {
+      loadTreeStructure(); 
+    });
+
+    set({ socketEditor: socket });
   },
 }));

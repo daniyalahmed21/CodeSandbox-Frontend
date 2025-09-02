@@ -6,27 +6,24 @@ import { io } from "socket.io-client";
 import { useEditorSocketStore } from "Store/EditorSocketStore";
 
 const ProjectPlayground = () => {
+  const { id: projectId } = useParams();
+  const setSocketEditor = useEditorSocketStore((state) => state.setSocketEditor);
   const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const { setSocketEditor } = useEditorSocketStore();
-  const { id: projectId } = useParams(); 
 
   useEffect(() => {
     if (!projectId) return;
-
-    const editorSocketConn = io(`${VITE_BACKEND_URL}/editor`, {
+  
+    const socket = io(`${VITE_BACKEND_URL}/editor`, {
       query: { projectId },
     });
-
-    setSocketEditor(editorSocketConn);
-
-    return () => {
-      editorSocketConn.disconnect();
-    };
-  }, [setSocketEditor, projectId, VITE_BACKEND_URL]);
+  
+    setSocketEditor(socket);
+  
+    return () => socket.disconnect();
+  }, [projectId, setSocketEditor, VITE_BACKEND_URL]);
 
   return (
-    <div>
-      ProjectPlayground: {projectId}
+    <div className="flex">
       <TreeStructure />
       <EditorComponent />
     </div>

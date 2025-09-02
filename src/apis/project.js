@@ -10,7 +10,7 @@ export const createProjectApi = async () => {
   }
 };
 
-export const getProjectTree = async (projectId) => {
+export const getProjectTree = async ({projectId}) => {
   try {
     const response = await instance.get(`/api/v1/projects/${projectId}/tree`);
     return response.data;
