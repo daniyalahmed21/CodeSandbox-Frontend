@@ -26,9 +26,9 @@ const ProjectPlayground = () => {
   }, [projectId, setSocketEditor, VITE_BACKEND_URL]);
 
   return (
-    <div className="flex h-full ">
+    <div className="flex h-full">
       <TreeStructure />
-      <div className="flex flex-col flex-1  overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <EditorComponent />
         <BrowserTerminal />
       </div>
