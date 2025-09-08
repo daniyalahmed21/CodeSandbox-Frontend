@@ -38,9 +38,9 @@ export const EditorComponent = () => {
             console.log("Sending writefile event");
             editorSocket.emit("writeFile", {
                 data: editorContent,
-                pathToFileOrFolder: activeFileTab.path
+                pathOfFileOrFolder: activeFileTab.path
             })
-        }, 2000);
+        }, 1000); // Reduced from 2000ms to 1000ms for faster updates
         
     }
 

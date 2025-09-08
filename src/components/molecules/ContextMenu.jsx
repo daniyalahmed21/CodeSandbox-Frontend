@@ -1,6 +1,6 @@
 import React from "react";
 import { useContextMenuStore } from "Store/ContextMenuStore";
-import { useEditorSocketStore } from "Store/EditorSocketStore";
+import { useEditorSocketStore } from "Store/editorSocketStore";
 
 const ContextMenu = () => {
   const { isOpen, x, y, targetPath, closeMenu } = useContextMenuStore();
@@ -22,18 +22,18 @@ const ContextMenu = () => {
   return (
     <div
       onMouseLeave={closeMenu}
-      className="absolute bg-gray-800 text-white rounded shadow-lg p-2 max-w-xs "
+      className="absolute bg-gray-800 shadow-lg p-2 rounded max-w-xs text-white"
       style={{ top: y, left: x }}
     >
-      <div className="px-4 py-2 hover:bg-gray-700 cursor-pointer">Open</div>
-      <div className="px-4 py-2 hover:bg-gray-700 cursor-pointer">Rename</div>
+      <div className="hover:bg-gray-700 px-4 py-2 cursor-pointer">Open</div>
+      <div className="hover:bg-gray-700 px-4 py-2 cursor-pointer">Rename</div>
       <div
         onClick={handleDeleteFile}
-        className="px-4 py-2 hover:bg-gray-700 cursor-pointer"
+        className="hover:bg-gray-700 px-4 py-2 cursor-pointer"
       >
         Delete
       </div>
-      <div className="text-xs text-gray-400 mt-1 px-2">{targetPath}</div>
+      <div className="mt-1 px-2 text-gray-400 text-xs">{targetPath}</div>
     </div>
   );
 };

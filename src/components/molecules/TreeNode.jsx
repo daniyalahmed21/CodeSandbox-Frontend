@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileIcon } from "Components/atoms/FileIcon";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useContextMenuStore } from "Store/ContextMenuStore";
-import { useEditorSocketStore } from "Store/EditorSocketStore";
+import { useEditorSocketStore } from "Store/editorSocketStore";
 import ContextMenu from "./ContextMenu";
 
 const TreeNode = ({ fileDataStructure }) => {
@@ -32,7 +32,7 @@ const TreeNode = ({ fileDataStructure }) => {
         <div>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 text-blue-400 hover:text-blue-300 font-medium py-1 w-full text-left"
+            className="flex items-center gap-2 py-1 w-full font-medium text-blue-400 hover:text-blue-300 text-left"
           >
             {isOpen ? (
               <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -44,7 +44,7 @@ const TreeNode = ({ fileDataStructure }) => {
           </button>
 
           {isOpen && (
-            <div className="ml-6 border-l border-gray-700 pl-3">
+            <div className="ml-6 pl-3 border-gray-700 border-l">
               {fileDataStructure.children.map((child) => (
                 <TreeNode key={child.path} fileDataStructure={child} />
               ))}

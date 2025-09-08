@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import ThemeSelector from "Components/atoms/ThemeSelector";
 import { useActiveFileTabStore } from "Store/ActiveFileTabStore";
-import { useEditorSocketStore } from "Store/EditorSocketStore";
+import { useEditorSocketStore } from "Store/editorSocketStore";
 import { getLanguageFromExtension } from "Utils/EditorUtils";
 
 import { customThemes } from "../../../themes/index";
@@ -37,7 +37,7 @@ const EditorComponent = () => {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-slate-800">
+    <div className="flex flex-col bg-slate-800 w-full h-screen">
       <ThemeSelector onThemeChange={setTheme} currentTheme={theme} />
       <div className="flex-grow">
         <Editor
