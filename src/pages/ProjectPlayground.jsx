@@ -1,53 +1,113 @@
-import React, { useEffect } from "react";
-import BrowserTerminal from "Components/molecules/BrowserTerminal";
-import EditorComponent from "Components/molecules/EditorComponent";
-import TreeStructure from "Components/molecules/TreeStructure";
-import { Browser } from "Components/organisms/Browser/Browser";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom"
+import { EditorComponent } from "../components/molecules/EditorComponent/EditorComponent";
+import { TreeStructure } from "../components/organisms/TreeStructure/TreeStructure";
+import { useEffect, useState } from "react";
+import { useTreeStructureStore } from "../store/treeStructureStore";
+import { useEditorSocketStore } from "../store/editorSocketStore";
 import { io } from "socket.io-client";
-import { useEditorSocketStore } from "Store/editorSocketStore";
-import { useTerminalSocketStore } from "Store/terminalSocketStore";
+import { BrowserTerminal } from "../components/molecules/BrowserTerminal/BrowserTerminal";
+import { useTerminalSocketStore } from "../store/terminalSocketStore";
+import { Browser } from "../components/organisms/Browser/Browser";
+import { Button } from "antd";
+import { Allotment } from "allotment";
+import "allotment/dist/style.css";
+export const ProjectPlayground = () => {
 
-const ProjectPlayground = () => {
-  const { id: projectId } = useParams();
-  const setSocketEditor = useEditorSocketStore(
-    (state) => state.setSocketEditor
-  );
-  const setTerminalSocket = useTerminalSocketStore(
-    (state) => state.setTerminalSocket
-  );
-  const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-  const backendBase = VITE_BACKEND_URL || "http://localhost:3000";
+    const {projectId: projectIdFromUrl } = useParams();
 
-  useEffect(() => {
-    if (!projectId) return;
+    const { setProjectId, projectId } = useTreeStructureStore();
 
-    // Initialize editor socket
-    const editorSocket = io(`${backendBase}/editor`, {
-      query: { projectId },
-    });
-    setSocketEditor(editorSocket);
+    const { setEditorSocket } = useEditorSocketStore();
+    const { terminalSocket, setTerminalSocket } = useTerminalSocketStore();
 
-    // Initialize terminal WebSocket
-    const terminalWs = new WebSocket(`ws://localhost:3000/Terminal?projectId=${projectId}`);
-    setTerminalSocket(terminalWs);
+    const [loadBrowser, setLoadBrowser] = useState(false);
 
-    return () => {
-      editorSocket.disconnect();
-      terminalWs.close();
-    };
-  }, [projectId, setSocketEditor, setTerminalSocket, backendBase]);
+    useEffect(() => {
+        if(projectIdFromUrl) {
+            setProjectId(projectIdFromUrl);
+        
+            const editorSocketConn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
+                query: {
+                    projectId: projectIdFromUrl
+                }
+            });
 
-  return (
-    <div className="flex h-full">
-      <TreeStructure />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <EditorComponent />
-        <Browser projectId={projectId} />
-        <BrowserTerminal />
-      </div>
-    </div>
-  );
-};
+            try {
+                const ws = new WebSocket("ws://localhost:4000/terminal?projectId="+projectIdFromUrl);
+                setTerminalSocket(ws);
+                
+            } catch(error) {
+                console.log("error in ws", error);
+            }
+            setEditorSocket(editorSocketConn);
+        }
+        
+    }, [setProjectId, projectIdFromUrl, setEditorSocket, setTerminalSocket]);
 
-export default ProjectPlayground;
+    return (
+        <>
+        <div style={{ display: "flex" }}>
+            { projectId && (
+                    <div
+                        style={{
+                            backgroundColor: "#333254",
+                            paddingRight: "10px",
+                            paddingTop: "0.3vh",
+                            minWidth: "250px",
+                            maxWidth: "25%",
+                            height: "100vh",
+                            overflow: "auto"
+                        }}
+                    >
+                        <TreeStructure />
+                    </div>
+                )}
+            <div
+                style={{
+                    width: "100vw",
+                    height: "100vh"
+                }}
+            >
+                <Allotment>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                            height: "100%",
+                            backgroundColor: "#282a36"
+
+                        }}
+                    >
+
+                    <Allotment
+                        vertical={true}
+                    >
+                        <EditorComponent />
+                        {/* <Divider style={{color: 'white', backgroundColor: '#333254'}} plain>Terminal</Divider> */}
+                        <BrowserTerminal />
+                    </Allotment>
+                        
+                       
+                        
+                    </div>
+                    <div>
+                        <Button
+                            onClick={() => setLoadBrowser(true)}
+                        >
+                            Load my browser
+                        </Button>
+                        { loadBrowser && projectIdFromUrl && terminalSocket && <Browser projectId={projectIdFromUrl} />}
+                    </div>
+                </Allotment>
+
+            </div>
+        </div>
+           
+            {/* <EditorButton isActive={false} /> 
+            <EditorButton isActive={true}/>  */}
+            
+            
+        </>
+    )
+}

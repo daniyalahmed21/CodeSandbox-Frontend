@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from '../config/axiosConfig';
 
-async function ping() {
-  try {
-    const response = await axios.get("");
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
+export const pingApi = async () => {
+    try {
+        const response = await axios.get('/api/v1/ping');
+        console.log(response.data);
+        return response.data;
+    } catch(error) {
+        console.log(error);
+        throw error;
+    }
 }
-
-export default ping;

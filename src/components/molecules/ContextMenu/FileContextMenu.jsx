@@ -12,21 +12,12 @@ export const FileContextMenu = ({
 
     const { editorSocket } = useEditorSocketStore();
 
-    function handleOpenFile(e) {
-        e.preventDefault();
-        editorSocket?.emit("readFile", {
-            pathToFileOrFolder: path
-        });
-        setIsOpen(false);
-    }
-
     function handleFileDelete(e) {
         e.preventDefault();
         console.log("Deleting file at", path);
-        editorSocket?.emit("deleteFile", {
+        editorSocket.emit("deleteFile", {
             pathToFileOrFolder: path
         });
-        setIsOpen(false);
     }
 
     return (
@@ -41,12 +32,6 @@ export const FileContextMenu = ({
                 top: y,
             }}
         >
-            <button
-                className='fileContextButton'
-                onClick={handleOpenFile}
-            >
-                Open File
-            </button>
             <button
                 className='fileContextButton'
                 onClick={handleFileDelete}

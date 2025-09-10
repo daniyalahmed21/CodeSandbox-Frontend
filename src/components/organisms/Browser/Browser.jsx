@@ -7,76 +7,26 @@ import { ReloadOutlined } from "@ant-design/icons";
 export const Browser = ({ projectId }) => {
 
     const browserRef = useRef(null);
-    const { port, setPort } = usePortStore();
+    const { port } = usePortStore();
 
     const { editorSocket } = useEditorSocketStore();
 
     useEffect(() => {
-        if(!port && editorSocket && projectId) {
-            editorSocket.emit("getPort", { containerName: projectId });
+        if(!port) {
+            editorSocket?.emit("getPort", {
+                containerName: projectId
+            })
         }
-    }, [port, editorSocket, projectId]);
+    }, [port, editorSocket]);
 
-    // Handle port response and container ready
-    useEffect(() => {
-        if(!editorSocket) return;
-        
-        const handlePortResponse = ({ port: receivedPort }) => {
-            if(receivedPort) {
-                setPort(receivedPort);
-            }
-        };
-
-        const handleContainerReady = ({ port: receivedPort }) => {
-            if(receivedPort) {
-                setPort(receivedPort);
-            }
-        };
-
-        editorSocket.on("portResponse", handlePortResponse);
-        editorSocket.on("containerReady", handleContainerReady);
-        
-        return () => {
-            editorSocket.off("portResponse", handlePortResponse);
-            editorSocket.off("containerReady", handleContainerReady);
-        };
-    }, [editorSocket, setPort]);
-
-    // Auto-refresh iframe on backend file change events
-    useEffect(() => {
-        if(!editorSocket) return;
-        
-        const refresh = () => {
-            if(browserRef.current && port) {
-                // Force refresh by adding timestamp to URL
-                const baseUrl = `http://localhost:${port}`;
-                browserRef.current.src = `${baseUrl}?t=${Date.now()}`;
-            }
-        };
-        
-        const debounced = (() => {
-            let t = null;
-            return () => {
-                clearTimeout(t);
-                t = setTimeout(refresh, 500); // Increased debounce time for better performance
-            };
-        })();
-
-        editorSocket.on("file-change", debounced);
-        editorSocket.on("fileChange", debounced);
-        editorSocket.on("writeFileSuccess", debounced); // Also refresh on successful file writes
-        
-        return () => {
-            editorSocket.off?.("file-change", debounced);
-            editorSocket.off?.("fileChange", debounced);
-            editorSocket.off?.("writeFileSuccess", debounced);
-        };
-    }, [editorSocket, port]);
+    if(!port) {
+        return <div>Loading....</div>
+    }
 
     function handleRefresh() {
-        if(browserRef.current && port) {
-            const baseUrl = `http://localhost:${port}`;
-            browserRef.current.src = `${baseUrl}?t=${Date.now()}`;
+        if(browserRef.current) {
+            const oldAddr = browserRef.current.src;
+            browserRef.current.src = oldAddr;
         }
     }
 
@@ -95,12 +45,12 @@ export const Browser = ({ projectId }) => {
                     backgroundColor: "#282a35",
                 }}
                 prefix={<ReloadOutlined onClick={handleRefresh} />}
-                value={port ? `http://localhost:${port}` : ""}
+                defaultValue={`http://localhost:${port}`}
             />
 
             <iframe 
                 ref={browserRef}
-                src={port ? `http://localhost:${port}` : "about:blank"}
+                src={`http://localhost:${port}`}
                 style={{
                     width: "100%",
                     height: "95vh",

@@ -1,39 +1,41 @@
-import React from "react";
-import { useCreateProject } from "Hooks/apis/mutations/useCreateProject";
-import { useNavigate } from "react-router";
+import { Button, Col, Flex, Row } from "antd";
+import { useCreateProject } from "../hooks/apis/mutations/useCreateProject"
+import { useNavigate } from "react-router-dom";
 
-const CreateProject = () => {
-  const { createProjectAsync, isPending, isError, error } = useCreateProject();
-  const navigate = useNavigate();
+  
+export const CreateProject = () => {
 
-  const handleCreateProject = async () => {
-    try {
-      const response = await createProjectAsync();
-      navigate(`/projects/${response.projectId}`);
-    } catch (err) {
-      console.error("Create project failed:", err);
+    const { createProjectMutation } = useCreateProject();
+
+    const navigate = useNavigate();
+
+    async function handleCreateProject() {
+        console.log("Going to trigger the api");
+        try {
+            const response = await createProjectMutation();
+            console.log("Now we should redirect to the editor");
+            navigate(`/project/${response.data}`)
+        } catch(error) {
+            console.log("Error creating project", error);
+        }
     }
-  };
 
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold underline mb-4">Hello world!</h1>
-
-      <button
-        onClick={handleCreateProject}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        disabled={isPending}
-      >
-        {isPending ? "Creating..." : "Create Project"}
-      </button>
-
-      {isError && (
-        <p className="text-red-500 mt-2">
-          Error: {error?.message || "Something went wrong"}
-        </p>
-      )}
-    </div>
-  );
-};
-
-export default CreateProject;
+    return (
+        
+        <Row>
+         
+            <Col span={24} >
+                <Flex justify="center" align="center">
+                    <Button
+                            type="primary"
+                            onClick={handleCreateProject}
+                    >
+                        Create Playground
+                    </Button>
+                </Flex>
+            </Col>
+            
+        </Row>
+            
+    )
+}

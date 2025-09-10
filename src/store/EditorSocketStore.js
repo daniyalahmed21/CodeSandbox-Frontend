@@ -1,36 +1,40 @@
 import { create } from "zustand";
-
-import { useActiveFileTabStore } from "./ActiveFileTabStore";
-import { useTreeStructureStore } from "./TreeStructureStore";
+import { useActiveFileTabStore } from "./activeFileTabStore";
+import { useTreeStructureStore } from "./treeStructureStore";
 import { usePortStore } from "./portStore";
 
 export const useEditorSocketStore = create((set) => ({
-  socketEditor: null,
-  // mirror key used by some components
-  editorSocket: null,
+    editorSocket: null,
+    setEditorSocket: (incomingSocket) => {
 
-  setSocketEditor: (socket) => {
-    const { setActiveFileTab } = useActiveFileTabStore.getState();
-    const { loadTreeStructure } = useTreeStructureStore.getState();
-    const { setPort } = usePortStore.getState();
+        const activeFileTabSetter = useActiveFileTabStore.getState().setActiveFileTab;
+        const projectTreeStructureSetter = useTreeStructureStore.getState().setTreeStructure;
+        const portSetter = usePortStore.getState().setPort;
 
-    socket.on("readFileSuccess", ({ path, data, extension }) => {
-      setActiveFileTab(path, data, extension);
-    });
+        incomingSocket?.on("readFileSuccess", (data) => {
+            console.log("Read file success", data);
+            const fileExtension = data.path.split('.').pop();
+            activeFileTabSetter(data.path, data.value, fileExtension);
+        });
 
-    socket.on("writeFileSuccess", ({ path }) => {
-      socket.emit("readFile", { pathOfFileOrFolder: path });
-    });
+        incomingSocket?.on("writeFileSuccess", (data) => {
+            console.log("Write file success", data);
+            // incomingSocket.emit("readFile", {
+            //     pathToFileOrFolder: data.path
+            // })
+        });
 
-    socket.on("deleteFileSuccess", () => {
-      loadTreeStructure();
-    });
+        incomingSocket?.on("deleteFileSuccess", () => {
+            projectTreeStructureSetter();
+        });
 
-    // receive container port from backend to power live preview
-    socket.on("getPortSuccess", ({ port }) => {
-      setPort(port);
-    });
+        incomingSocket?.on("getPortSuccess", ({ port }) => {
+            console.log("port data", port);
+            portSetter(port);
+        })
 
-    set({ socketEditor: socket, editorSocket: socket });
-  },
+        set({
+            editorSocket: incomingSocket
+        });
+    }
 }));

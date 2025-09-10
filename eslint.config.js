@@ -1,19 +1,13 @@
-import js from '@eslint/js';
-import { defineConfig, globalIgnores } from 'eslint/config';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import globals from 'globals';
+import js from '@eslint/js'
+import globals from 'globals'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 
-export default defineConfig([
-  globalIgnores(['dist']),
+export default [
+  { ignores: ['dist'] },
   {
     files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -23,32 +17,23 @@ export default defineConfig([
         sourceType: 'module',
       },
     },
-    // Add the plugins section
+    settings: { react: { version: '18.3' } },
     plugins: {
-      'simple-import-sort': simpleImportSort,
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
-      // Add the simple-import-sort rule with your custom groups
-      'simple-import-sort/imports': [
-        'error',
-        {
-          groups: [
-            // 1. Side effect imports
-            ['^\\u0000'],
-            // 2. React and packages
-            ['^react$', '^@?\\w'],
-            // 3. Absolute imports and other imports
-            ['^@', '^'],
-            // 4. Relative imports from the same folder "./"
-            ['^\\./'],
-            // 5. Style module imports
-            ['^.+\\.(module.css|module.scss)$'],
-            // 6. Media imports
-            ['^.+\\.(gif|png|svg|jpg)$'],
-          ],
-        },
+      ...js.configs.recommended.rules,
+      ...react.configs.recommended.rules,
+      ...react.configs['jsx-runtime'].rules,
+      ...reactHooks.configs.recommended.rules,
+      'react/jsx-no-target-blank': 'off',
+      "react/prop-types": "off",
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
       ],
     },
   },
-]);
+]
