@@ -1,16 +1,20 @@
-import { useQuery } from "@tanstack/react-query"
-import { getProjectTree } from "../../../apis/projects"
+import { useQuery } from "@tanstack/react-query";
+import { getProjectTree } from "../../../apis/projects";
 
 export const useProjectTree = (projectId) => {
-    
-    const { isLoading, isError, data: projectTree, error } = useQuery({
-        queryFn: () => getProjectTree({ projectId }),
-    });
+  const {
+    isLoading,
+    isError,
+    data: projectTree,
+    error,
+  } = useQuery({
+    queryFn: () => getProjectTree({ projectId }),
+  });
 
-    return {
-        isLoading,
-        isError,
-        projectTree,
-        error,
-    };
-}
+  return {
+    isLoading,
+    isError,
+    projectTree,
+    error,
+  };
+};
