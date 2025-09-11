@@ -8,6 +8,7 @@ import { io } from "socket.io-client";
 import { BrowserTerminal } from "../components/molecules/BrowserTerminal/BrowserTerminal";
 import { useTerminalSocketStore } from "../store/terminalSocketStore";
 import { Browser } from "../components/organisms/Browser/Browser";
+// import { Button } from "antd"; // Removed Ant Design Button
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 

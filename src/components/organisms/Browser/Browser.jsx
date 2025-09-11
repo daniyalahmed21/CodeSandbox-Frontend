@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+// import { Input, Row } from "antd"; // Removed Ant Design components
 import { useEditorSocketStore } from "../../../store/editorSocketStore";
 import { usePortStore } from "../../../store/portStore";
 import { ReloadOutlined } from "@ant-design/icons";
@@ -50,7 +51,7 @@ export const Browser = ({ projectId }) => {
       <iframe
         ref={browserRef}
         src={`http://localhost:${port}`}
-        className="border-none w-full h-[calc(100vh-2.5rem)]" 
+        className="border-none w-full h-[calc(100vh-2.5rem)]" // Use calc to account for the address bar height (h-10 = 2.5rem)
       />
     </div>
   );
