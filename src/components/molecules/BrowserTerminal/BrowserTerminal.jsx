@@ -1,18 +1,13 @@
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
-import "@xterm/xterm/css/xterm.css"; // required styles
+import "@xterm/xterm/css/xterm.css"; 
 import { useEffect, useRef } from 'react';
 import { AttachAddon } from '@xterm/addon-attach';
 import { useTerminalSocketStore } from '../../../store/terminalSocketStore';
 
 export const BrowserTerminal = () => {
-
     const terminalRef = useRef(null);
-    // const socket = useRef(null);
-    // const {projectId: projectIdFromUrl } = useParams();
-
     const { terminalSocket } = useTerminalSocketStore();
-    
 
     useEffect(() => {
         const term = new Terminal({
@@ -29,7 +24,7 @@ export const BrowserTerminal = () => {
             },
             fontSize: 16,
             fontFamily: "Fira Code",
-            convertEol: true, // convert CRLF to LF
+            convertEol: true, 
         });
 
         term.open(terminalRef.current);
@@ -37,14 +32,12 @@ export const BrowserTerminal = () => {
         term.loadAddon(fitAddon);
         fitAddon.fit();
 
-        if(terminalSocket) {
+        if (terminalSocket) {
             terminalSocket.onopen = () => {
                 const attachAddon = new AttachAddon(terminalSocket);
                 term.loadAddon(attachAddon);
-                // socket.current = ws;
             }
         }
-
 
         return () => {
             term.dispose();
@@ -55,13 +48,9 @@ export const BrowserTerminal = () => {
     return (
         <div
             ref={terminalRef}
-            style={{
-                width: "100vw",
-            }}
-            className='terminal'
+            className='w-full'
             id="terminal-container"
         >
-
         </div>
     )
 }

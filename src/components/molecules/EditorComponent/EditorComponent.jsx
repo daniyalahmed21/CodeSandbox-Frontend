@@ -5,20 +5,16 @@ import { useEditorSocketStore } from '../../../store/editorSocketStore';
 import { extensionToFileType } from '../../../utils/extensionToFileType';
 
 export const EditorComponent = () => {
-
     let timerId = null;
     const [editorState, setEditorState] = useState({
         theme: null
     });
-
     const { activeFileTab } = useActiveFileTabStore();
-
     const { editorSocket } = useEditorSocketStore();
 
     async function downloadTheme() {
         const response = await fetch('/Dracula.json');
         const data = await response.json();
-        console.log(data);
         setEditorState({ ...editorState, theme: data });
     }
 
@@ -29,7 +25,7 @@ export const EditorComponent = () => {
 
     function handleChange(value) {
         // Clear old timer
-        if(timerId != null) {
+        if (timerId != null) {
             clearTimeout(timerId);
         }
         // set the new timer
@@ -41,7 +37,6 @@ export const EditorComponent = () => {
                 pathToFileOrFolder: activeFileTab.path
             })
         }, 2000);
-        
     }
 
     useEffect(() => {
@@ -49,11 +44,11 @@ export const EditorComponent = () => {
     }, []);
 
     return (
-        <>
-            {   editorState.theme &&
-                <Editor 
-                    
+        <div className="flex-1 w-full h-full">
+            {editorState.theme &&
+                <Editor
                     width={'100%'}
+                    height={'100%'} // Ensure editor takes up full height of parent
                     defaultLanguage={undefined}
                     defaultValue='// Welcome to the playground'
                     options={{
@@ -63,10 +58,9 @@ export const EditorComponent = () => {
                     language={extensionToFileType(activeFileTab?.extension)}
                     onChange={handleChange}
                     value={activeFileTab?.value ? activeFileTab.value : '// Welcome to the playground'}
-
                     onMount={handleEditorTheme}
                 />
             }
-        </>
+        </div>
     )
 }
